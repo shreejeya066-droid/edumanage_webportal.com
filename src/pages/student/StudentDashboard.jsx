@@ -47,19 +47,6 @@ export const StudentDashboard = () => {
 
     return (
         <div className="space-y-6">
-            {/* Password Recovery Warning */}
-            {user?.isEmailMissing && (
-                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm flex items-center gap-4 animate-in fade-in slide-in-from-top duration-500">
-                    <div className="bg-amber-100 p-2 rounded-full">
-                        <AlertTriangle className="h-5 w-5 text-amber-600" />
-                    </div>
-                    <div className="flex-1">
-                        <h3 className="text-sm font-bold text-amber-800">Email Missing for Recovery</h3>
-                        <p className="text-sm text-amber-700">Please add your email address in the <Link to="/student/profile" className="font-bold underline">Profile</Link> section to enable password recovery features.</p>
-                    </div>
-                </div>
-            )}
-
             {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
                 <div className="flex flex-col md:flex-row items-center gap-6">
@@ -78,6 +65,20 @@ export const StudentDashboard = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Password Recovery Note (Moved & Styled as Info) */}
+            {user?.isEmailMissing && (
+                <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded-r-lg shadow-sm flex items-center gap-4">
+                    <div className="bg-indigo-100 p-2 rounded-full">
+                        <Bell className="h-5 w-5 text-indigo-600" />
+                    </div>
+                    <div className="flex-1">
+                        <p className="text-sm text-indigo-800">
+                            <strong>Self-Service:</strong> Enable password recovery by adding your email address in the <Link to="/student/profile" className="font-bold underline decoration-2">Profile</Link> section.
+                        </p>
+                    </div>
+                </div>
+            )}
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
