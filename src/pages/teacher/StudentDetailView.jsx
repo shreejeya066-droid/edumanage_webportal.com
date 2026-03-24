@@ -15,30 +15,42 @@ export const StudentDetailView = () => {
     const [student, setStudent] = useState(null);
     const [profileDetails, setProfileDetails] = useState(null);
 
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        const users = getAllUsers();
-        // Try to find by username first, then ID
-        const found = users.find(u => u.username === id || u.id === id);
-
-        if (found) {
-            setStudent(found);
-
-            // Priority: DB Data (if isProfileComplete is explicitly true, or fallback to object itself)
-            if (found.isProfileComplete) {
-                setProfileDetails(found);
-            } else {
-                // Fallback: Check Legacy LocalStorage
-                const storedProfile = localStorage.getItem(`student_profile_${found.username}`);
-                if (storedProfile) {
-                    try {
-                        setProfileDetails(JSON.parse(storedProfile));
-                    } catch (e) {
-                        console.error("Error parsing profile data", e);
-                    }
+        const fetchDetails = async () => {
+            setIsLoading(true);
+            try {
+                const { fetchStudentProfile } = await import('../../services/api');
+                const data = await fetchStudentProfile(id);
+                setStudent(data);
+                setProfileDetails(data);
+            } catch (err) {
+                console.error("Failed to fetch student profile", err);
+                
+                // Fallback to searching context if API fails
+                const users = getAllUsers();
+                const found = users.find(u => u.username === id || u.id === id);
+                if (found) {
+                    setStudent(found);
+                    setProfileDetails(found);
                 }
+            } finally {
+                setIsLoading(false);
             }
-        }
+        };
+
+        fetchDetails();
     }, [id, getAllUsers]);
+
+    if (isLoading) {
+        return (
+            <div className="text-center py-24">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                <p className="text-gray-500">Fetching student profile...</p>
+            </div>
+        );
+    }
 
     if (!student) {
         return (

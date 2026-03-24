@@ -17,8 +17,8 @@ export const AuthProvider = ({ children }) => {
         // Fetch Settings from DB
         fetchSettingsAsync();
 
-        // Fetch Users (for Admin/Teacher views that rely on context cache)
-        fetchAllUsers();
+        // Removed fetchAllUsers() from initial load to improve performance.
+        // Data will be fetched on-demand by components like StudentList.
 
         setLoading(false);
     }, []);
@@ -116,6 +116,10 @@ export const AuthProvider = ({ children }) => {
             const { loginStudent } = await import('../services/api');
             const data = await loginStudent({ rollNumber, password });
             const sessionUser = { ...data, role: 'student' };
+            
+            // Check if email is missing for password recovery warning
+            sessionUser.isEmailMissing = !data.email || data.email === '';
+            
             setUser(sessionUser);
             localStorage.setItem('app_user', JSON.stringify(sessionUser));
             return { success: true, role: 'student', isFirstLogin: data.isFirstLogin };
@@ -266,7 +270,25 @@ export const AuthProvider = ({ children }) => {
     const verifyEmail = () => ({ exists: false });
     const sendOTP = () => { };
     const verifyOTP = () => { };
-    const resetPassword = () => { };
+    
+    const forgotPasswordAsync = async (email) => {
+        try {
+            const { forgotPassword } = await import('../services/api');
+            return await forgotPassword(email);
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
+    const resetPasswordAsync = async (token, password) => {
+        try {
+            const { resetPassword } = await import('../services/api');
+            return await resetPassword(token, password);
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
+
     const deleteUser = async (identifier, role = 'student') => {
         try {
             const { deleteStudent, deleteTeacher } = await import('../services/api');
@@ -338,7 +360,9 @@ export const AuthProvider = ({ children }) => {
             // Compatibility / Deprecated Stubs
             setupPassword, completeProfile, registerStudent, updateProfile,
             requestProfileUpdate, getProfileRequests, approveProfileRequest, rejectProfileRequest, getPendingRequest,
-            verifyEmail, sendOTP, verifyOTP, resetPassword, deleteUser
+            verifyEmail, sendOTP, verifyOTP, 
+            forgotPasswordAsync, resetPasswordAsync,
+            deleteUser
         }}>
             {children}
         </AuthContext.Provider>

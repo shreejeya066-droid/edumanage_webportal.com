@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'https://student-backend-osum.onrender.com/api';
+export const API_BASE_URL = 'http://localhost:5000/api';
 
 export const fetchStudents = async () => {
     try {
@@ -315,6 +315,31 @@ export const verifyOTP = async (credentials) => {
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Verification failed');
+        return data;
+    } catch (error) { throw error; }
+};
+
+export const forgotPassword = async (email) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/students/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+        });
+        const data = await response.json();
+        return data;
+    } catch (error) { throw error; }
+};
+
+export const resetPassword = async (token, password) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/students/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token, password }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Reset failed');
         return data;
     } catch (error) { throw error; }
 };

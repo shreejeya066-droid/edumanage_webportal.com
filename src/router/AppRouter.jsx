@@ -7,6 +7,7 @@ import { TeacherLogin } from '../pages/auth/TeacherLogin';
 import { TeacherCreatePassword } from '../pages/auth/TeacherCreatePassword';
 import { TeacherProfileSetup } from '../pages/auth/TeacherProfileSetup';
 import { ForgotPassword } from '../pages/auth/ForgotPassword';
+import { ResetPassword } from '../pages/auth/ResetPassword';
 
 import { ChangePassword } from '../pages/auth/ChangePassword';
 
@@ -51,6 +52,7 @@ export const AppRouter = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/teacher-login" element={<TeacherLogin />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             {/* Admin Authentication Routes */}
             <Route path="/admin/login" element={<AdminLoginPage />} />

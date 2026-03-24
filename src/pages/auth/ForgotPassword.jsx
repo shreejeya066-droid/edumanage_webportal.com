@@ -7,223 +7,95 @@ import { useAuth } from '../../context/AuthContext';
 import { ArrowLeft, Send, CheckCircle, RefreshCcw } from 'lucide-react';
 
 export const ForgotPassword = () => {
-    const navigate = useNavigate();
-    const { checkUserStatus, changePassword } = useAuth(); // We might need a direct reset method or mock it
-
-    const [step, setStep] = useState(1); // 1: Email/Roll, 2: OTP, 3: New Password
-    const [rollNumber, setRollNumber] = useState('');
-    const [otp, setOtp] = useState('');
-    const [newPass, setNewPass] = useState('');
-    const [confirmPass, setConfirmPass] = useState('');
+    const { forgotPasswordAsync } = useAuth();
+    const [email, setEmail] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
 
-    // Timer state
-    const [timer, setTimer] = useState(0);
-
-    useEffect(() => {
-        let interval;
-        if (timer > 0) {
-            interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-        }
-        return () => clearInterval(interval);
-    }, [timer]);
-
-    const handleSendOTP = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setMessage('');
 
-        if (!rollNumber) {
-            setError('Please enter your Roll Number');
+        if (!email) {
+            setError('Please enter your registered email address.');
             return;
         }
 
+        setIsLoading(true);
         try {
-            const { sendOTP } = await import('../../services/api');
-            await sendOTP(rollNumber);
-            
-            setTimer(30);
-            setStep(2);
-            setSuccessMessage(`OTP sent to registered mobile number for ${rollNumber}`);
+            const result = await forgotPasswordAsync(email);
+            // Always show the same message for security (don't reveal if email exists)
+            setMessage(result.message || "If this email is registered, a reset link has been sent.");
+            setEmail('');
         } catch (err) {
-            setError(err.message || 'Failed to send OTP. Please check your roll number.');
-        }
-    };
-
-    const handleVerifyOTP = async (e) => {
-        e.preventDefault();
-        setError('');
-
-        if (otp.length !== 4) {
-            setError('Please enter a valid 4-digit OTP');
-            return;
-        }
-
-        try {
-            const { verifyOTP } = await import('../../services/api');
-            await verifyOTP({ rollNumber, otp });
-            
-            setStep(3);
-            setSuccessMessage('');
-        } catch (err) {
-            setError(err.message || 'Invalid OTP. Please try again.');
-        }
-    };
-
-    const handleResetPassword = (e) => {
-        e.preventDefault();
-        setError('');
-
-        if (!newPass || !confirmPass) {
-            setError('Please fill all fields');
-            return;
-        }
-
-        if (newPass !== confirmPass) {
-            setError('Passwords do not match');
-            return;
-        }
-
-        // Mock Reset: accessing AuthContext isn't perfect here as we aren't logged in.
-        // But for mock data persistence, we need to update the user in our mock DB.
-        // We can reuse a method from AuthContext if we expose one, OR just hacking it here since strict security isn't possible purely client-side mock.
-        // Let's rely on a hypothetical 'resetPassword' function or similar?
-        // Actually, let's just use the logic directly here or assume an API call.
-        // We will "simulate" it by updating the specific user in localStorage 'all_users' (if created) or we can't update static mockData.
-
-        // Let's try to do it right via AuthContext if possible, but we don't need to be authenticated to reset.
-        // I'll assume success for UI flow purposes.
-
-        // For the demo to "work", let's update localStorage if they were a dynamic user.
-        const storedUsers = JSON.parse(localStorage.getItem('all_users') || '[]');
-        const userIndex = storedUsers.findIndex(u => u.username === rollNumber);
-
-        if (userIndex >= 0) {
-            storedUsers[userIndex].password = newPass;
-            localStorage.setItem('all_users', JSON.stringify(storedUsers));
-        } else {
-            // Static user from mockData? We can't really update it without a backend or memory-hack.
-            // But we can pretend.
-            // Or we can add them to "all_users" effectively shadowing the static one?
-            // Let's do that for the demo!
-            // Wait, checkUserStatus would find "found" from static data.
-            // If we write to localStorage 'all_users' with same username, subsequent getAllUsers should prefer dynamic?
-            // My getAllUsers returns [...USERS, ...stored]; 
-            // If duplicates exist, find() returns the first one (static).
-            // So to override static users, we need logic in AuthContext usually.
-            // But strict requirement says "Keep student functionality unchanged... Only implement Admin & Login". 
-            // Reset functionality implies it should work.
-            // I'll just show success UI.
-        }
-
-        setSuccessMessage('Password reset successfully! Redirecting to login...');
-
-        setTimeout(() => {
-            navigate('/login');
-        }, 2000);
-    };
-
-    const handleResend = () => {
-        if (timer === 0) {
-            setTimer(30);
-            setSuccessMessage('OTP resent successfully.');
+            setError('An error occurred. Please try again later.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-            <Card className="w-full max-w-md p-6 bg-white shadow-xl">
-                <div className="mb-6">
-                    <Link to="/login" className="text-sm text-gray-500 hover:text-indigo-600 flex items-center gap-1 mb-4">
-                        <ArrowLeft className="h-4 w-4" /> Back to Login
+            <Card className="w-full max-w-md p-6 sm:p-8 bg-white shadow-xl border-t-4 border-indigo-600">
+                <div className="mb-8">
+                    <Link to="/login" className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-800 mb-6 transition-colors">
+                        <ArrowLeft className="h-4 w-4 mr-1" /> Back to Login
                     </Link>
-                    <h1 className="text-2xl font-bold text-gray-900">Forgot Password</h1>
-                    <p className="text-gray-500 mt-2">
-                        {step === 1 && "Enter your roll number to receive an OTP."}
-                        {step === 2 && "Enter the 4-digit OTP sent to your mobile."}
-                        {step === 3 && "Create a new strong password."}
-                    </p>
+                    <h1 className="text-3xl font-bold text-gray-900">Forgot Password?</h1>
+                    <p className="text-gray-500 mt-2">Enter your registered email address and we'll send you a link to reset your password.</p>
                 </div>
 
-                {error && (
-                    <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-md border border-red-100">
-                        {error}
+                {message ? (
+                    <div className="text-center py-4">
+                        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4 transition-transform hover:scale-110">
+                            <Send className="h-8 w-8 text-green-600" />
+                        </div>
+                        <h2 className="text-xl font-semibold text-gray-900 mb-2">Check your email</h2>
+                        <p className="text-gray-600 mb-6">{message}</p>
+                        <Button 
+                            variant="outline" 
+                            className="w-full"
+                            onClick={() => setMessage('')}
+                        >
+                            Try another email
+                        </Button>
                     </div>
-                )}
-
-                {successMessage && (
-                    <div className="mb-4 p-3 bg-green-50 text-green-600 text-sm rounded-md border border-green-100 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4" /> {successMessage}
-                    </div>
-                )}
-
-                {step === 1 && (
-                    <form onSubmit={handleSendOTP} className="space-y-4">
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         <Input
-                            label="Roll Number"
-                            placeholder="e.g. 23BIT01"
-                            value={rollNumber}
-                            onChange={(e) => setRollNumber(e.target.value.toUpperCase())}
+                            label="Email Address"
+                            type="email"
+                            placeholder="Enter your registered email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             autoFocus
+                            required
                         />
-                        <Button type="submit" className="w-full">
-                            Send OTP <Send className="h-4 w-4 ml-2" />
+
+                        {error && (
+                            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-100">
+                                {error}
+                            </div>
+                        )}
+
+                        <Button 
+                            type="submit" 
+                            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg" 
+                            size="lg" 
+                            isLoading={isLoading}
+                        >
+                            Send Reset Link
                         </Button>
                     </form>
                 )}
 
-                {step === 2 && (
-                    <form onSubmit={handleVerifyOTP} className="space-y-4">
-                        <div className="text-center mb-2">
-                            <p className="text-sm font-medium text-gray-900">{rollNumber}</p>
-                        </div>
-                        <Input
-                            label="Enter OTP"
-                            placeholder="Screen check: 1234"
-                            value={otp}
-                            onChange={(e) => setOtp(e.target.value)}
-                            maxLength={4}
-                            className="text-center tracking-widest text-lg"
-                            autoFocus
-                        />
-                        <Button type="submit" className="w-full">
-                            Verify OTP
-                        </Button>
-                        <div className="text-center mt-2">
-                            <button
-                                type="button"
-                                onClick={handleResend}
-                                disabled={timer > 0}
-                                className={`text-sm flex items-center justify-center w-full gap-1 ${timer > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-indigo-600 hover:text-indigo-700'}`}
-                            >
-                                <RefreshCcw className="h-3 w-3" />
-                                {timer > 0 ? `Resend OTP in ${timer}s` : 'Resend OTP'}
-                            </button>
-                        </div>
-                    </form>
-                )}
-
-                {step === 3 && (
-                    <form onSubmit={handleResetPassword} className="space-y-4">
-                        <div className="space-y-2">
-                            <Input
-                                label="New Password"
-                                type="password"
-                                value={newPass}
-                                onChange={(e) => setNewPass(e.target.value)}
-                            />
-                            <Input
-                                label="Confirm Password"
-                                type="password"
-                                value={confirmPass}
-                                onChange={(e) => setConfirmPass(e.target.value)}
-                            />
-                        </div>
-                        <Button type="submit" className="w-full">
-                            Reset Password
-                        </Button>
-                    </form>
-                )}
+                <div className="mt-8 pt-6 border-t text-center">
+                    <p className="text-sm text-gray-500">
+                        Can't remember your email? <span className="text-indigo-600 font-medium italic">Contact the Admin</span>
+                    </p>
+                </div>
             </Card>
         </div>
     );

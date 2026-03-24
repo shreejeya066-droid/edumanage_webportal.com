@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Card } from '../../components/ui/Card';
-import { User, FileText, CheckCircle, Clock, Bell } from 'lucide-react';
+import { User, FileText, CheckCircle, Clock, Bell, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const StudentDashboard = () => {
     const { user } = useAuth();
@@ -46,6 +47,19 @@ export const StudentDashboard = () => {
 
     return (
         <div className="space-y-6">
+            {/* Password Recovery Warning */}
+            {user?.isEmailMissing && (
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm flex items-center gap-4 animate-in fade-in slide-in-from-top duration-500">
+                    <div className="bg-amber-100 p-2 rounded-full">
+                        <AlertTriangle className="h-5 w-5 text-amber-600" />
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="text-sm font-bold text-amber-800">Email Missing for Recovery</h3>
+                        <p className="text-sm text-amber-700">Please add your email address in the <Link to="/student/profile" className="font-bold underline">Profile</Link> section to enable password recovery features.</p>
+                    </div>
+                </div>
+            )}
+
             {/* Welcome Banner */}
             <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-xl">
                 <div className="flex flex-col md:flex-row items-center gap-6">
