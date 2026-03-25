@@ -305,31 +305,7 @@ export const naturalLanguageQuery = async (queryText) => {
 };
 
 // Password Recovery API Calls
-export const sendOTP = async (rollNumber) => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/students/send-otp`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rollNumber }),
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Failed to send OTP');
-        return data;
-    } catch (error) { throw error; }
-};
-
-export const verifyOTP = async (credentials) => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/students/verify-otp`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credentials),
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || 'Verification failed');
-        return data;
-    } catch (error) { throw error; }
-};
+// Removed old OTP stubs to avoid confusion with new auth based flow
 
 export const forgotPassword = async (email) => {
     try {
@@ -352,12 +328,25 @@ export const forgotPassword = async (email) => {
     } catch (error) { throw error; }
 };
 
-export const resetPassword = async (token, password) => {
+export const verifyOTP = async (email, otp) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/reset-password/${token}`, {
+        const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password }),
+            body: JSON.stringify({ email, otp }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Invalid or expired OTP');
+        return data;
+    } catch (error) { throw error; }
+};
+
+export const resetPassword = async (email, otp, password) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp, password }),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Reset failed');

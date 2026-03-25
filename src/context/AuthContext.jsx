@@ -269,7 +269,14 @@ export const AuthProvider = ({ children }) => {
     // Password Recovery Stubs
     const verifyEmail = () => ({ exists: false });
     const sendOTP = () => { };
-    const verifyOTP = () => { };
+    const verifyOTPAsync = async (email, otp) => {
+        try {
+            const { verifyOTP } = await import('../services/api');
+            return await verifyOTP(email, otp);
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
+    };
     
     const forgotPasswordAsync = async (email) => {
         try {
@@ -280,10 +287,10 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const resetPasswordAsync = async (token, password) => {
+    const resetPasswordAsync = async (email, otp, password) => {
         try {
             const { resetPassword } = await import('../services/api');
-            return await resetPassword(token, password);
+            return await resetPassword(email, otp, password);
         } catch (error) {
             return { success: false, message: error.message };
         }
@@ -360,7 +367,7 @@ export const AuthProvider = ({ children }) => {
             // Compatibility / Deprecated Stubs
             setupPassword, completeProfile, registerStudent, updateProfile,
             requestProfileUpdate, getProfileRequests, approveProfileRequest, rejectProfileRequest, getPendingRequest,
-            verifyEmail, sendOTP, verifyOTP, 
+            verifyOTPAsync, 
             forgotPasswordAsync, resetPasswordAsync,
             deleteUser
         }}>
