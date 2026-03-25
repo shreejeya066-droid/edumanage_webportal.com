@@ -326,8 +326,17 @@ export const forgotPassword = async (email) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
         });
-        const data = await response.json();
-        return data;
+        
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            return await response.json();
+        } else {
+            // If not JSON, it's likely an HTML 404 or Render error page
+            if (!response.ok) {
+                 throw new Error(`Server Error (${response.status}): The API endpoint was not found or the server is down.`);
+            }
+            throw new Error("Unexpected response from server. Please try again later.");
+        }
     } catch (error) { throw error; }
 };
 
