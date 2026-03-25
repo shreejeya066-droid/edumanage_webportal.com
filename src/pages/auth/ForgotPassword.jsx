@@ -11,6 +11,7 @@ export const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const [debugToken, setDebugToken] = useState('');
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
@@ -28,6 +29,9 @@ export const ForgotPassword = () => {
             const result = await forgotPasswordAsync(email);
             // Always show the same message for security (don't reveal if email exists)
             setMessage(result.message || "If this email is registered, a reset link has been sent.");
+            if (result.debugToken) {
+                setDebugToken(result.debugToken);
+            }
             setEmail('');
         } catch (err) {
             setError('An error occurred. Please try again later.');
@@ -54,10 +58,29 @@ export const ForgotPassword = () => {
                         </div>
                         <h2 className="text-xl font-semibold text-gray-900 mb-2">Check your email</h2>
                         <p className="text-gray-600 mb-6">{message}</p>
+                        
+                        {debugToken && (
+                            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg text-left shadow-inner">
+                                <p className="text-[10px] font-bold text-amber-800 uppercase mb-2 tracking-wider">Debug Mode: Manual Reset Link</p>
+                                <p className="text-[11px] text-amber-700 break-all bg-white/50 p-2 border border-amber-100 rounded font-mono">
+                                    {window.location.origin}/reset-password?token={debugToken}
+                                </p>
+                                <a 
+                                    href={`/reset-password?token=${debugToken}`}
+                                    className="block mt-3 py-2 text-xs text-center font-bold text-white bg-amber-600 rounded hover:bg-amber-700 transition-colors shadow-sm"
+                                >
+                                    TEST RESET NOW
+                                </a>
+                            </div>
+                        )}
+
                         <Button 
                             variant="outline" 
-                            className="w-full"
-                            onClick={() => setMessage('')}
+                            className="w-full mt-6"
+                            onClick={() => {
+                                setMessage('');
+                                setDebugToken('');
+                            }}
                         >
                             Try another email
                         </Button>
