@@ -1,4 +1,16 @@
-export const API_BASE_URL = 'https://student-backend-osum.onrender.com/api';
+// Detect if running locally or in production
+const isLocal = window.location.hostname === 'localhost' || 
+                 window.location.hostname === '127.0.0.1' || 
+                 window.location.hostname.startsWith('192.168.') || 
+                 window.location.hostname.startsWith('10.');
+
+console.log(`Current Hostname: ${window.location.hostname}`);
+export const API_BASE_URL = isLocal 
+    ? 'http://localhost:5000/api' 
+    : 'https://student-backend-osum.onrender.com/api';
+
+console.log(`React app is pointing to API: ${API_BASE_URL}`);
+
 
 export const fetchStudents = async () => {
     try {
@@ -321,7 +333,7 @@ export const verifyOTP = async (credentials) => {
 
 export const forgotPassword = async (email) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/students/forgot-password`, {
+        const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -342,10 +354,10 @@ export const forgotPassword = async (email) => {
 
 export const resetPassword = async (token, password) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/students/reset-password`, {
+        const response = await fetch(`${API_BASE_URL}/auth/reset-password/${token}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token, password }),
+            body: JSON.stringify({ password }),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Reset failed');
