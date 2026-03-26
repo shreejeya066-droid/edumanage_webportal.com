@@ -21,7 +21,13 @@ export const QueryInput = () => {
     // --- Auto Sync Logic ---
     const syncFiltersFromText = (text) => {
         const lower = text.toLowerCase();
-        const newFilters = { ...filters };
+        // Reset to default before detection to avoid 'stuck' filters (e.g. Java Expert staying selected)
+        const newFilters = { 
+            year: 'All', 
+            cgpa: 'All', 
+            placement: 'All', 
+            skill: 'All' 
+        };
 
         // 1. Year Sync
         const yearMatch = lower.match(/(1st|2nd|3rd|4th|first|second|third|fourth)\s*year/);
@@ -254,7 +260,7 @@ export const QueryInput = () => {
                             <div>
                                 <h3 className="text-xl font-bold border-b-2 border-indigo-500 inline-block pb-1">Search Results</h3>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Query: <strong className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{response.meta.original_query}</strong>
+                                    Filters applied: <strong className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{response.meta.extracted_keyword}</strong>
                                 </p>
                             </div>
                         </div>
