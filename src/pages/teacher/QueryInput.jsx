@@ -259,13 +259,19 @@ export const QueryInput = () => {
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold border-b-2 border-indigo-500 inline-block pb-1">Search Results</h3>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    Filters applied: <strong className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{response.meta.extracted_keyword}</strong>
-                                </p>
+                                <div className="flex flex-col gap-1 mt-1">
+                                    <p className="text-sm text-gray-500">
+                                        Filters applied: <strong className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{response.meta.extracted_keyword}</strong>
+                                    </p>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                                        DB Status: {response.meta.dbStatus}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                         <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100 font-medium whitespace-nowrap">
-                            <span className="text-indigo-600 text-xl font-bold">{response.meta.count}</span> Students Found
+                            <span className="text-indigo-600 text-xl font-bold">{response.meta.count}</span> Results
                         </div>
                     </div>
 
