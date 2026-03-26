@@ -6,6 +6,7 @@ import { Modal } from '../../components/ui/Modal';
 import { Input } from '../../components/ui/Input';
 import { Search, Filter, MoreVertical, Plus, Users, ShieldAlert, Edit, Check, X, Eye, Trash2 } from 'lucide-react';
 import { CreateStudentForm } from '../../components/admin/CreateStudentForm';
+import { fetchStudents, registerStudent, fetchStudentProfile, deleteStudent, updateStudentProfile } from '../../services/api';
 
 export const StudentManagement = () => {
     // const { getAllUsers, deleteUser } = useAuth(); // Removed unused
@@ -14,12 +15,12 @@ export const StudentManagement = () => {
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState('list'); // 'list' | 'requests'
 
     // Fetch students
     const fetchStudentsData = async () => {
         try {
-            const { fetchStudents } = await import('../../services/api');
             const data = await fetchStudents();
             setStudents(data);
         } catch (error) {
@@ -32,14 +33,13 @@ export const StudentManagement = () => {
     }, []);
 
     const handleCreateUser = async (formData) => {
+        setIsSubmitting(true);
         try {
-            const { registerStudent } = await import('../../services/api');
-
             const nameParts = formData.fullName.split(' ');
             const firstName = nameParts[0];
             const lastName = nameParts.slice(1).join(' ') || '';
 
-            await registerStudent({
+            const response = await registerStudent({
                 rollNumber: formData.rollNumber,
                 password: 'password123',
                 firstName: firstName,
@@ -50,19 +50,35 @@ export const StudentManagement = () => {
                 yearOfStudy: formData.year
             });
 
+            // Optimistically update the local list so we don't need a slow full fetch
+            const newStudentObj = {
+                _id: response._id,
+                rollNumber: formData.rollNumber,
+                firstName: firstName,
+                lastName: lastName,
+                email: formData.email,
+                phone: formData.mobile,
+                department: formData.department,
+                yearOfStudy: formData.year,
+                isProfileComplete: false,
+                isLocked: false
+            };
+
+            setStudents(prev => [newStudentObj, ...prev]);
             setIsCreateModalOpen(false);
-            fetchStudentsData();
+            
             alert(`Student ${formData.rollNumber} created successfully.`);
         } catch (error) {
             console.error(error);
             alert(`Failed to create student: ${error.message}`);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
 
     const handleViewProfile = async (student) => {
         try {
-            const { fetchStudentProfile } = await import('../../services/api');
             const fullProfile = await fetchStudentProfile(student.rollNumber || student.username);
             setSelectedStudent(fullProfile);
         } catch (error) {
@@ -74,7 +90,6 @@ export const StudentManagement = () => {
     const handleDelete = async (username) => {
         if (window.confirm(`Are you sure you want to delete student ${username}? This action cannot be undone.`)) {
             try {
-                const { deleteStudent } = await import('../../services/api');
                 await deleteStudent(username);
                 fetchStudentsData();
             } catch (error) {
@@ -101,7 +116,6 @@ export const StudentManagement = () => {
             const storedRequests = JSON.parse(localStorage.getItem('profile_requests') || '{}');
 
             if (action === 'approve') {
-                const { updateStudentProfile } = await import('../../services/api');
                 // Unlock the student profile in the database
                 await updateStudentProfile(username, { isLocked: false });
             }
@@ -346,6 +360,7 @@ export const StudentManagement = () => {
                 <CreateStudentForm
                     onClose={() => setIsCreateModalOpen(false)}
                     onSubmit={handleCreateUser}
+                    isLoading={isSubmitting}
                 />
             )}
         </div>

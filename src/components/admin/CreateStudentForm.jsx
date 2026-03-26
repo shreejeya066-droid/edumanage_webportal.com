@@ -3,7 +3,7 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { X } from 'lucide-react';
 
-export const CreateStudentForm = ({ onClose, onSubmit }) => {
+export const CreateStudentForm = ({ onClose, onSubmit, isLoading }) => {
     const [formData, setFormData] = useState({
         rollNumber: '',
         fullName: '',
@@ -118,7 +118,11 @@ export const CreateStudentForm = ({ onClose, onSubmit }) => {
                         <Button type="button" variant="outline" onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button type="submit" className="bg-purple-600 hover:bg-purple-700">
+                        <Button 
+                            type="submit" 
+                            className="bg-purple-600 hover:bg-purple-700"
+                            isLoading={isLoading}
+                        >
                             Create Account
                         </Button>
                     </div>
