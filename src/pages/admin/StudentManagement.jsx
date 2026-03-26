@@ -60,8 +60,15 @@ export const StudentManagement = () => {
     };
 
 
-    const handleViewProfile = (student) => {
-        setSelectedStudent(student);
+    const handleViewProfile = async (student) => {
+        try {
+            const { fetchStudentProfile } = await import('../../services/api');
+            const fullProfile = await fetchStudentProfile(student.rollNumber || student.username);
+            setSelectedStudent(fullProfile);
+        } catch (error) {
+            console.error("Failed to fetch full student profile", error);
+            setSelectedStudent(student);
+        }
     };
 
     const handleDelete = async (username) => {
@@ -302,20 +309,20 @@ export const StudentManagement = () => {
                             </div>
                         </div>
 
-                        {selectedStudent.isProfileComplete || selectedStudent.firstName ? (
+                        {selectedStudent.isProfileComplete || selectedStudent.firstName || selectedStudent.dob ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <InfoItem label="Roll Number" value={selectedStudent.rollNumber || selectedStudent.username} />
                                 <InfoItem label="Year of Joining" value={selectedStudent.yearOfJoining || 'N/A'} />
                                 <InfoItem label="Course" value={selectedStudent.course} />
                                 <InfoItem label="Department" value={selectedStudent.department} />
                                 <InfoItem label="Email" value={selectedStudent.email} />
-                                <InfoItem label="Mobile" value={selectedStudent.phone} />
+                                <InfoItem label="Mobile" value={selectedStudent.mobile || selectedStudent.phone} />
                                 <InfoItem label="Gender" value={selectedStudent.gender} />
                                 <InfoItem label="DOB" value={selectedStudent.dob} />
                             </div>
                         ) : (
                             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 text-yellow-800">
-                                Profile setup incomplete.
+                                Profile setup incomplete. Only basic admission data available.
                             </div>
                         )}
                         {/* <div className="flex justify-end pt-4">
