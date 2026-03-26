@@ -80,29 +80,18 @@ export const QueryInput = () => {
     const executeSmartSearch = async (currentQuery, currentFilters) => {
         let finalQuery = currentQuery.trim();
 
-        // If search box is empty, build a query from the dropdowns
-        if (!finalQuery) {
-            const parts = [];
-            if (currentFilters.year !== 'All') parts.push(`${currentFilters.year} year`);
-            if (currentFilters.cgpa !== 'All') {
-                const cgpaVal = currentFilters.cgpa.replace('>', '');
-                parts.push(`cgpa above ${cgpaVal}`);
-            }
-            if (currentFilters.placement !== 'All') parts.push(`${currentFilters.placement} placement`);
-            if (currentFilters.skill !== 'All') parts.push(currentFilters.skill);
-            
-            finalQuery = parts.join(' ');
-        }
-
-        if (!finalQuery) {
-            setResponse(null);
-            return;
-        }
+        // If search box is empty, we can rely on dropdowns (or the backend's handling of them)
+        // For the best experience, we pass BOTH query and filters
+        const activeFilters = {};
+        if (currentFilters.year !== 'All') activeFilters.year = currentFilters.year;
+        if (currentFilters.cgpa !== 'All') activeFilters.cgpa = currentFilters.cgpa.replace('>', '');
+        if (currentFilters.placement !== 'All') activeFilters.placement = currentFilters.placement;
+        if (currentFilters.skill !== 'All') activeFilters.skill = currentFilters.skill;
 
         setLoading(true);
         try {
             const { naturalLanguageQuery } = await import('../../services/api');
-            const result = await naturalLanguageQuery(finalQuery);
+            const result = await naturalLanguageQuery(finalQuery, activeFilters);
             setResponse(result);
         } catch (error) {
             console.error("Query failed", error);
@@ -265,7 +254,7 @@ export const QueryInput = () => {
                             <div>
                                 <h3 className="text-xl font-bold border-b-2 border-indigo-500 inline-block pb-1">Search Results</h3>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Filters applied: <strong className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{response.meta.extracted_keyword}</strong>
+                                    Query: <strong className="text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">{response.meta.original_query}</strong>
                                 </p>
                             </div>
                         </div>
@@ -321,10 +310,10 @@ export const QueryInput = () => {
                                                         <span className="font-medium text-blue-700">Higher Studies</span>
                                                     </div>
                                                 )}
-                                                {student.technicalSkills && (
+                                                { (student.skills || student.technicalSkills) && (
                                                     <div className="flex items-center gap-2 text-sm text-gray-600 col-span-2 mt-1">
                                                         <Code className="h-4 w-4 text-purple-400 shrink-0" />
-                                                        <span className="truncate text-xs text-gray-500 tracking-wide">{student.technicalSkills}</span>
+                                                        <span className="truncate text-xs text-gray-500 tracking-wide">{student.skills || student.technicalSkills}</span>
                                                     </div>
                                                 )}
                                             </div>

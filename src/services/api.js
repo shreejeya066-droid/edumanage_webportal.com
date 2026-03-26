@@ -291,12 +291,16 @@ export const deleteTeacher = async (id) => {
     } catch (error) { throw error; }
 };
 
-export const naturalLanguageQuery = async (queryText) => {
+export const naturalLanguageQuery = async (queryText, filters = {}) => {
     try {
+        const payload = { 
+            query: queryText,
+            ...filters 
+        };
         const response = await fetch(`${API_BASE_URL}/students/query`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query: queryText }),
+            body: JSON.stringify(payload),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.message || 'Query failed');
