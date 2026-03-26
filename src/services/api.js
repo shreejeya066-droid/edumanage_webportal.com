@@ -1,12 +1,12 @@
 // Detect if running locally or in production
-const isLocal = window.location.hostname === 'localhost' || 
-                 window.location.hostname === '127.0.0.1' || 
-                 window.location.hostname.startsWith('192.168.') || 
-                 window.location.hostname.startsWith('10.');
+const isLocal = window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname.startsWith('192.168.') ||
+    window.location.hostname.startsWith('10.');
 
 console.log(`Current Hostname: ${window.location.hostname}`);
-export const API_BASE_URL = isLocal 
-    ? 'http://localhost:5000/api' 
+export const API_BASE_URL = isLocal
+    ? 'http://localhost:5000/api'
     : 'https://student-backend-osum.onrender.com/api';
 
 console.log(`React app is pointing to API: ${API_BASE_URL}`);
@@ -314,14 +314,14 @@ export const forgotPassword = async (email) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
         });
-        
+
         const contentType = response.headers.get("content-type");
         if (contentType && contentType.indexOf("application/json") !== -1) {
             return await response.json();
         } else {
             // If not JSON, it's likely an HTML 404 or Render error page
             if (!response.ok) {
-                 throw new Error(`Server Error (${response.status}): The API endpoint was not found or the server is down.`);
+                throw new Error(`Server Error (${response.status}): The API endpoint was not found or the server is down.`);
             }
             throw new Error("Unexpected response from server. Please try again later.");
         }
