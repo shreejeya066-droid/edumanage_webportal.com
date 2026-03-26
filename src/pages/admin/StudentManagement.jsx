@@ -257,9 +257,19 @@ export const StudentManagement = () => {
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{displayId}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{name}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap">
-                                                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${student.isLocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                                                            {student.isLocked ? 'Completed & Locked' : 'Active'}
-                                                        </span>
+                                                        {student.isLocked ? (
+                                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                                                Completed & Locked
+                                                            </span>
+                                                        ) : student.isProfileComplete || student.firstName ? (
+                                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                                                Profile Finished
+                                                            </span>
+                                                        ) : (
+                                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                                Profile Incomplete
+                                                            </span>
+                                                        )}
                                                     </td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
                                                         <Button size="sm" variant="ghost" onClick={() => handleViewProfile(student)}>
