@@ -9,6 +9,7 @@ export const QueryInput = () => {
     const [query, setQuery] = useState('');
     const [response, setResponse] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
 
     // --- Manual Hybrid Filters ---
     const [filters, setFilters] = useState({
@@ -80,6 +81,7 @@ export const QueryInput = () => {
         setQuery('');
         setFilters({ year: 'All', cgpa: 'All', placement: 'All', skill: 'All' });
         setResponse(null);
+        setHasSearched(false);
     };
 
     // --- Core Search Logic (The Trigger) ---
@@ -107,17 +109,9 @@ export const QueryInput = () => {
         }
     };
 
-    // --- Debounced Auto-Trigger ---
-    React.useEffect(() => {
-        const timer = setTimeout(() => {
-            executeSmartSearch(query, filters);
-        }, 600); // 600ms debounce for typing
-
-        return () => clearTimeout(timer);
-    }, [query, filters]);
-
     const handleQuery = (e) => {
         e.preventDefault();
+        setHasSearched(true);
         executeSmartSearch(query, filters);
     };
 
@@ -241,7 +235,17 @@ export const QueryInput = () => {
             </div>
 
             {/* Results Section */}
-            {loading && (
+            {!hasSearched && !loading && (
+                <div className="p-12 bg-white rounded-3xl border border-gray-100 shadow-sm text-center animate-in fade-in">
+                    <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <User className="h-10 w-10 text-indigo-300" />
+                    </div>
+                    <h4 className="text-xl font-bold text-gray-900 mb-2">Enter a query to search students</h4>
+                    <p className="text-gray-500">Use the search box above to find students by skills, year, or performance.</p>
+                </div>
+            )}
+
+            {hasSearched && loading && (
                 <div className="flex flex-col items-center justify-center p-20 space-y-4 animate-pulse">
                     <div className="p-4 bg-indigo-50 rounded-2xl">
                         <Sparkles className="h-10 w-10 text-indigo-400 animate-bounce" />
@@ -250,7 +254,7 @@ export const QueryInput = () => {
                 </div>
             )}
 
-            {!loading && response && !response.error && (
+            {hasSearched && !loading && response && !response.error && (
                 <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out">
                     <div className="flex items-center justify-between mb-6 px-2">
                         <div className="flex items-center gap-4">
@@ -358,7 +362,7 @@ export const QueryInput = () => {
                             <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <User className="h-10 w-10 text-indigo-300" />
                             </div>
-                            <h4 className="text-xl font-bold text-gray-900 mb-2">No exactly matching students</h4>
+                            <h4 className="text-xl font-bold text-gray-900 mb-2">No students found</h4>
                             <p className="text-gray-500">We couldn't find any student profile that perfectly matches your query.</p>
                             <p className="text-sm text-indigo-400 mt-2">Try broadening your search terms like "CSE", "Python", or "CGPA above 7.0"</p>
                         </div>
@@ -366,7 +370,7 @@ export const QueryInput = () => {
                 </div>
             )}
 
-            {response && response.error && (
+            {hasSearched && response && response.error && (
                 <div className="p-6 rounded-2xl bg-red-50 text-red-700 border border-red-200 text-center font-medium shadow-sm animate-in slide-in-from-top-4">
                     {response.message}
                 </div>
