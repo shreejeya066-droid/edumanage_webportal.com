@@ -72,13 +72,21 @@ export const ForgotPassword = () => {
         e.preventDefault();
         setError('');
 
+        // Regex: At least 1 Uppercase, 1 Digit, 1 Special Char, and Min 8 characters
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
+
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
 
-        if (password.length < 6) {
-            setError('Password must be at least 6 characters.');
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters.');
+            return;
+        }
+
+        if (!passwordRegex.test(password)) {
+            setError('Password must contain at least 1 uppercase letter, 1 digit, and 1 special character.');
             return;
         }
 
@@ -177,6 +185,7 @@ export const ForgotPassword = () => {
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            maxLength={16}
                             required
                         />
                         <Input
@@ -185,6 +194,7 @@ export const ForgotPassword = () => {
                             placeholder="••••••••"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            maxLength={16}
                             required
                         />
                         <Button type="submit" className="w-full bg-indigo-600" isLoading={isLoading}>

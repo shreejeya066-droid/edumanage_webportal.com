@@ -49,8 +49,16 @@ export const ChangePassword = () => {
         e.preventDefault();
         setError('');
 
-        if (newPassword.length < 6) {
-            setError('Password must be at least 6 characters long');
+        // Regex: At least 1 Uppercase, 1 Digit, 1 Special Char, and Min 8 characters
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
+
+        if (newPassword.length < 8) {
+            setError('Password must be at least 8 characters long');
+            return;
+        }
+
+        if (!passwordRegex.test(newPassword)) {
+            setError('Password must contain at least 1 uppercase letter, 1 digit, and 1 special character.');
             return;
         }
 

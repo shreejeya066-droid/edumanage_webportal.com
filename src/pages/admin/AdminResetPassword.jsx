@@ -21,8 +21,8 @@ export const AdminResetPassword = () => {
     };
 
     const validatePassword = (pwd) => {
-        // Minimum 8 chars, at least one number and one special char
-        const regex = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;
+        // Regex: At least 1 Uppercase, 1 Digit, 1 Special Char, and Min 8 characters
+        const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
         return regex.test(pwd);
     };
 
@@ -45,7 +45,7 @@ export const AdminResetPassword = () => {
         }
 
         if (!validatePassword(passwords.newPassword)) {
-            setError('Password must be at least 8 characters with 1 number and 1 special character.');
+            setError('Password must be at least 8 characters with 1 uppercase letter, 1 number, and 1 special character.');
             return;
         }
 

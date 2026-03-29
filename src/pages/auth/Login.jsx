@@ -300,7 +300,7 @@ export const Login = () => {
                                 type={showNewPassword ? "text" : "password"}
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
-                                maxLength={8}
+                                maxLength={16}
                                 suffix={
                                     <button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
                                         {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -312,7 +312,7 @@ export const Login = () => {
                                 type={showConfirmPassword ? "text" : "password"}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                maxLength={8}
+                                maxLength={16}
                                 suffix={
                                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="text-gray-500 hover:text-gray-700 focus:outline-none">
                                         {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
