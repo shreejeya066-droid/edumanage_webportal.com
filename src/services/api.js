@@ -7,7 +7,7 @@ const isLocal = window.location.hostname === 'localhost' ||
 console.log(`Current Hostname: ${window.location.hostname}`);
 export const API_BASE_URL = isLocal
     ? 'http://localhost:5000/api'
-    : 'https://student-backend-osum.onrender.com/api';
+    : 'https://edumanagewebportalcom.vercel.app/api';
 
 console.log(`React app is pointing to API: ${API_BASE_URL}`);
 
@@ -293,9 +293,9 @@ export const deleteTeacher = async (id) => {
 
 export const naturalLanguageQuery = async (queryText, filters = {}) => {
     try {
-        const payload = { 
+        const payload = {
             query: queryText,
-            ...filters 
+            ...filters
         };
         const response = await fetch(`${API_BASE_URL}/students/query`, {
             method: 'POST',
