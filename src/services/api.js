@@ -7,7 +7,7 @@ const isLocal = window.location.hostname === 'localhost' ||
 console.log(`Current Hostname: ${window.location.hostname}`);
 export const API_BASE_URL = isLocal
     ? 'http://localhost:5000/api'
-    : 'https://edumanagewebportalcom.vercel.app/api';
+    : 'https://student-backend-one.vercel.app/api';
 
 console.log(`React app is pointing to API: ${API_BASE_URL}`);
 
