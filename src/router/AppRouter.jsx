@@ -71,6 +71,7 @@ export const AppRouter = () => {
                     <Route path="/admin/academic" element={<AcademicSetup />} />
                     <Route path="/admin/security" element={<SecurityAccess />} />
                     <Route path="/admin/profile" element={<AdminProfile />} />
+                    <Route path="/admin/analytics" element={<Analytics />} />
                 </Route>
             </Route>
 

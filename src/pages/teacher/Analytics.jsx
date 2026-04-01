@@ -16,7 +16,7 @@ export const Analytics = () => {
     // --- Power BI Configuration ---
     // PASTE YOUR POWER BI EMBED URL HERE
     // Ensure it is a valid "Publish to Web" or "Website or Portal" link.
-    const POWER_BI_EMBED_URL = "https://app.powerbi.com/reportEmbed?reportId=00000000-0000-0000-0000-000000000000&autoAuth=true&ctid=00000000-0000-0000-0000-000000000000";
+    const POWER_BI_EMBED_URL = "https://app.powerbi.com/reportEmbed?reportId=18f2d481-a684-4b3d-8ce3-f897d6ea99b1&autoAuth=true&ctid=406a6e9a-2c6d-4cd4-b5fc-299c924534e7";
 
     useEffect(() => {
         const loadData = async () => {
@@ -34,7 +34,7 @@ export const Analytics = () => {
     }, []);
 
     // Access Control Fallback
-    if (user && user.role !== 'teacher') {
+    if (user && !['teacher', 'admin'].includes(user.role)) {
         return (
             <div className="flex items-center justify-center min-h-[50vh]">
                 <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg shadow-sm">

@@ -9,7 +9,8 @@ import {
     LogOut,
     ShieldCheck,
     BookOpen,
-    Lock
+    Lock,
+    BarChart3
 } from 'lucide-react';
 
 export const AdminLayout = () => {
@@ -28,6 +29,7 @@ export const AdminLayout = () => {
         { path: '/admin/academic', label: 'Academic Setup', icon: BookOpen },
         { path: '/admin/security', label: 'Security & Access', icon: Lock },
         { path: '/admin/profile', label: 'Profile', icon: Settings },
+        { path: '/admin/analytics', label: 'Live Analytics', icon: BarChart3 },
     ];
 
     return (
