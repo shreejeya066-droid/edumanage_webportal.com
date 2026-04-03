@@ -357,3 +357,48 @@ export const resetPassword = async (email, otp, password) => {
         return data;
     } catch (error) { throw error; }
 };
+
+// Notification API Calls
+export const createNotification = async (notificationData) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/notifications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(notificationData),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Notification creation failed');
+        return data;
+    } catch (error) { throw error; }
+};
+
+export const fetchNotifications = async () => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/notifications`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch notifications');
+        return data;
+    } catch (error) { throw error; }
+};
+
+export const fetchStudentRequestStatus = async (rollNumber) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/notifications/student/${rollNumber}`);
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to fetch request status');
+        return data;
+    } catch (error) { throw error; }
+};
+
+export const updateNotificationStatus = async (id, status) => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/notifications/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Update failed');
+        return data;
+    } catch (error) { throw error; }
+};

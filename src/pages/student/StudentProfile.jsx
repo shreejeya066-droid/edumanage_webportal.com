@@ -30,11 +30,19 @@ export const StudentProfile = () => {
         if (user) {
             loadProfile();
 
-            const requests = JSON.parse(localStorage.getItem('profile_requests') || '{}');
-            const userRequest = requests[user.username || user.rollNumber];
-            if (userRequest) {
-                setRequestStatus(userRequest.status);
-            }
+            // Load Request Status from DB instead of LocalStorage
+            const checkRequest = async () => {
+                try {
+                    const { fetchStudentRequestStatus } = await import('../../services/api');
+                    const request = await fetchStudentRequestStatus(user.rollNumber || user.username);
+                    if (request && request.status) {
+                        setRequestStatus(request.status);
+                    }
+                } catch (err) {
+                    console.error("Failed to fetch request status", err);
+                }
+            };
+            checkRequest();
         }
     }, [user]);
 
@@ -48,22 +56,29 @@ export const StudentProfile = () => {
         }
     };
 
-    const handleRequestUpdate = ({ reason, fields }) => {
+    const handleRequestUpdate = async ({ reason, fields }) => {
         if (!user) return;
-        const newRequest = {
-            username: user.username,
-            name: user.name || (profileData ? `${profileData.firstName} ${profileData.lastName}` : 'Student'),
-            reason,
-            fields,
-            status: 'pending',
-            date: new Date().toISOString()
-        };
-        const requests = JSON.parse(localStorage.getItem('profile_requests') || '{}');
-        requests[user.username] = newRequest;
-        localStorage.setItem('profile_requests', JSON.stringify(requests));
-        setRequestStatus('pending');
-        setIsEditModalOpen(false);
-        alert("Update request submitted successfully! Pending Admin Approval.");
+        try {
+            const { createNotification } = await import('../../services/api');
+            const newRequest = {
+                studentId: user.username || user.rollNumber,
+                studentName: user.name || (profileData ? `${profileData.firstName} ${profileData.lastName}` : 'Student'),
+                type: 'Profile Edit Request',
+                message: `Requested a change in profile details: ${reason}`,
+                details: {
+                    reason,
+                    fields
+                }
+            };
+            
+            await createNotification(newRequest);
+            setRequestStatus('pending');
+            setIsEditModalOpen(false);
+            alert("Update request submitted successfully! Pending Admin Approval.");
+        } catch (err) {
+            console.error("Failed to submit request", err);
+            alert("Failed to submit request. Please try again.");
+        }
     };
 
     const handleChangePassword = () => {
