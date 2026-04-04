@@ -25,19 +25,6 @@ export const fetchStudents = async () => {
     }
 };
 
-export const fetchAnalytics = async () => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/students/analytics`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching analytics:', error);
-        throw error;
-    }
-};
-
 // Student API Calls
 export const uploadDocument = async (file) => {
     try {
