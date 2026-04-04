@@ -23,10 +23,12 @@ export const TeacherDashboard = () => {
 
     const students = getAllUsers().filter(u => u.role === 'student');
     const totalStudents = students.length;
-    const avgAttendance = Math.round(students.reduce((acc, s) => acc + (s.attendance || 0), 0) / totalStudents);
-
-    // Calculate average math score as a sample metric
-    const avgMathScore = Math.round(students.reduce((acc, s) => acc + (s.marks?.Math || 0), 0) / totalStudents);
+    
+    // Calculate new metrics
+    const maleCount = students.filter(s => s.gender?.toLowerCase() === 'male' || s.gender?.toLowerCase() === 'm').length;
+    const femaleCount = students.filter(s => s.gender?.toLowerCase() === 'female' || s.gender?.toLowerCase() === 'f').length;
+    const completedProfiles = students.filter(s => s.isProfileComplete === true).length;
+    const incompleteProfiles = students.filter(s => s.isProfileComplete === false).length;
 
     return (
         <div className="space-y-6">
@@ -40,7 +42,7 @@ export const TeacherDashboard = () => {
             </div>
 
             {/* Metrics */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 <Card className="hover:shadow-md transition-shadow">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <h3 className="text-sm font-medium text-gray-500">Total Students</h3>
@@ -49,26 +51,49 @@ export const TeacherDashboard = () => {
                     <div className="text-2xl font-bold text-gray-900">{totalStudents}</div>
                     <p className="text-xs text-gray-500">Active learners</p>
                 </Card>
+
+                {/* Male/Female Counts */}
                 <Card className="hover:shadow-md transition-shadow">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="text-sm font-medium text-gray-500">Avg. Attendance</h3>
-                        <FileText className="h-4 w-4 text-gray-500" />
+                        <h3 className="text-sm font-medium text-gray-500">Male Students</h3>
+                        <Users className="h-4 w-4 text-blue-500" />
                     </div>
-                    <div className="text-2xl font-bold text-green-600">{avgAttendance}%</div>
-                    <p className="text-xs text-gray-500">+2.1% from last month</p>
+                    <div className="text-2xl font-bold text-blue-600">{maleCount}</div>
+                    <p className="text-xs text-gray-500">Registered men</p>
                 </Card>
+
                 <Card className="hover:shadow-md transition-shadow">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="text-sm font-medium text-gray-500">Class Average (Math)</h3>
-                        <TrendingUp className="h-4 w-4 text-gray-500" />
+                        <h3 className="text-sm font-medium text-gray-500">Female Students</h3>
+                        <Users className="h-4 w-4 text-pink-500" />
                     </div>
-                    <div className="text-2xl font-bold text-indigo-600">{avgMathScore}%</div>
-                    <p className="text-xs text-gray-500">Across all sections</p>
+                    <div className="text-2xl font-bold text-pink-600">{femaleCount}</div>
+                    <p className="text-xs text-gray-500">Registered women</p>
                 </Card>
+
+                {/* Profile Status */}
+                <Card className="hover:shadow-md transition-shadow">
+                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <h3 className="text-sm font-medium text-gray-500">Profile Filled</h3>
+                        <FileText className="h-4 w-4 text-emerald-500" />
+                    </div>
+                    <div className="text-2xl font-bold text-emerald-600">{completedProfiles}</div>
+                    <p className="text-xs text-gray-500">Profiles completed</p>
+                </Card>
+
+                <Card className="hover:shadow-md transition-shadow">
+                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <h3 className="text-sm font-medium text-gray-500">Not Filled</h3>
+                        <FileText className="h-4 w-4 text-rose-500" />
+                    </div>
+                    <div className="text-2xl font-bold text-rose-600">{incompleteProfiles}</div>
+                    <p className="text-xs text-gray-500">Action required</p>
+                </Card>
+
                 <Card className="hover:shadow-md transition-shadow">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <h3 className="text-sm font-medium text-gray-500">Pending Queries</h3>
-                        <AlertCircle className="h-4 w-4 text-gray-500" />
+                        <AlertCircle className="h-4 w-4 text-amber-500" />
                     </div>
                     <div className="text-2xl font-bold text-amber-600">3</div>
                     <p className="text-xs text-gray-500">Requires attention</p>
