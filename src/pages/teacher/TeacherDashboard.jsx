@@ -42,7 +42,7 @@ export const TeacherDashboard = () => {
             </div>
 
             {/* Metrics */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 <Card className="hover:shadow-md transition-shadow">
                     <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <h3 className="text-sm font-medium text-gray-500">Total Students</h3>
@@ -88,15 +88,6 @@ export const TeacherDashboard = () => {
                     </div>
                     <div className="text-2xl font-bold text-rose-600">{incompleteProfiles}</div>
                     <p className="text-xs text-gray-500">Action required</p>
-                </Card>
-
-                <Card className="hover:shadow-md transition-shadow">
-                    <div className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <h3 className="text-sm font-medium text-gray-500">Pending Queries</h3>
-                        <AlertCircle className="h-4 w-4 text-amber-500" />
-                    </div>
-                    <div className="text-2xl font-bold text-amber-600">3</div>
-                    <p className="text-xs text-gray-500">Requires attention</p>
                 </Card>
             </div>
 
