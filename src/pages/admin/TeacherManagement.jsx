@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -10,6 +11,15 @@ export const TeacherManagement = () => {
     const [requests, setRequests] = useState([]); // Requests part is tricky as they are currently mock.
     const [searchTerm, setSearchTerm] = useState('');
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.openAddModal) {
+            setIsCreateModalOpen(true);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
 
     const fetchTeachersData = async () => {
         try {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -17,6 +18,16 @@ export const StudentManagement = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeTab, setActiveTab] = useState('list'); // 'list' | 'requests'
+
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.openAddModal) {
+            setIsCreateModalOpen(true);
+            // clear the state so it doesn't immediately reopen on page reload
+            window.history.replaceState({}, document.title); 
+        }
+    }, [location.state]);
 
     // Fetch students
     const fetchStudentsData = async () => {
