@@ -91,12 +91,6 @@ export const AdminDashboard = () => {
                 <Card className="p-4 sm:p-6">
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">System Notices</h3>
                     <div className="space-y-4">
-                        <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
-                            <h4 className="font-medium text-blue-900">Academic Year Setup</h4>
-                            <p className="text-sm text-blue-700 mt-1">
-                                The new academic year configuration is pending. Please visit Academic Structure Setup to finalize.
-                            </p>
-                        </div>
                         <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-100">
                             <h4 className="font-medium text-yellow-900">Security Alert</h4>
                             <p className="text-sm text-yellow-700 mt-1">

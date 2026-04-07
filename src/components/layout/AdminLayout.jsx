@@ -26,7 +26,6 @@ export const AdminLayout = () => {
         { path: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/admin/students', label: 'Student Management', icon: GraduationCap },
         { path: '/admin/teachers', label: 'Teacher Management', icon: Users },
-        { path: '/admin/academic', label: 'Academic Setup', icon: BookOpen },
         { path: '/admin/security', label: 'Security & Access', icon: Lock },
         { path: '/admin/profile', label: 'Profile', icon: Settings },
         { path: '/admin/analytics', label: 'Live Analytics', icon: BarChart3 },
