@@ -31,17 +31,19 @@ export const QueryInput = () => {
         };
 
         // 1. Year Sync
-        const yearMatch = lower.match(/(1st|2nd|3rd|4th|first|second|third|fourth)\s*year/);
+        const yearMatch = lower.match(/(\d)(?:st|nd|rd|th)?\s*year/i) || lower.match(/(first|second|third|fourth|final)\s*year/i);
         if (yearMatch) {
-            const val = yearMatch[1];
-            if (val.startsWith('1') || val.startsWith('fir')) newFilters.year = '1';
-            else if (val.startsWith('2') || val.startsWith('sec')) newFilters.year = '2';
-            else if (val.startsWith('3') || val.startsWith('thi')) newFilters.year = '3';
-            else if (val.startsWith('4') || val.startsWith('fou')) newFilters.year = '4';
+            const val = yearMatch[1].toLowerCase();
+            if (val === '1' || val.startsWith('fir')) newFilters.year = '1';
+            else if (val === '2' || val.startsWith('sec')) newFilters.year = '2';
+            else if (val === '3' || val.startsWith('thi')) newFilters.year = '3';
+            else if (val === '4' || val.startsWith('fou') || val.startsWith('fin')) newFilters.year = '4';
         }
 
         // 2. CGPA Sync
-        const cgpaMatch = lower.match(/(?:above|more than|>|greater than)\s*(\d+(\.\d+)?)/);
+        const cgpaMatch = lower.match(/(?:above|more than|>|>=|cgpaabove|cgpa\s*above)\s*(\d+(\.\d+)?)/);
+        const cgpaBelowMatch = lower.match(/(?:below|less than|<|<=|cgpabelow|cgpa\s*below)\s*(\d+(\.\d+)?)/);
+        
         if (cgpaMatch) {
             const val = parseFloat(cgpaMatch[1]);
             if (val >= 8) newFilters.cgpa = '>8';
@@ -129,6 +131,7 @@ export const QueryInput = () => {
                     Search and filter in one unified dashboard.
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 mt-4 text-xs font-semibold">
+                    <span className="px-3 py-1.5 bg-white border border-indigo-100 rounded-full text-indigo-600 shadow-sm cursor-pointer hover:bg-indigo-50 hover:scale-105 transition-transform" onClick={() => { setQuery("cgpaabove8.0 in 3rd year"); syncFiltersFromText("cgpaabove8.0 in 3rd year"); }}>"cgpaabove8.0 in 3rd year"</span>
                     <span className="px-3 py-1.5 bg-white border border-indigo-100 rounded-full text-indigo-600 shadow-sm cursor-pointer hover:bg-indigo-50 hover:scale-105 transition-transform" onClick={() => { setQuery("2nd year students with CGPA above 8"); syncFiltersFromText("2nd year students with CGPA above 8"); }}>"2nd year students above 8"</span>
                     <span className="px-3 py-1.5 bg-white border border-indigo-100 rounded-full text-indigo-600 shadow-sm cursor-pointer hover:bg-indigo-50 hover:scale-105 transition-transform" onClick={() => { setQuery("Placement ready knowing Python"); syncFiltersFromText("Placement ready knowing Python"); }}>"Placement ready Python"</span>
                 </div>
