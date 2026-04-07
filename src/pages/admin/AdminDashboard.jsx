@@ -33,7 +33,7 @@ export const AdminDashboard = () => {
 
     const studentsCount = allUsers.filter(u => u.role === 'student').length;
     const teachersCount = allUsers.filter(u => u.role === 'teacher').length;
-    const activeAccounts = allUsers.filter(u => !u.isLocked).length; // Assuming isLocked property or similar, else allUsers.length
+    const activeAccounts = allUsers.length;
 
     // Mock Data
     const stats = [
