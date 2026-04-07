@@ -42,12 +42,21 @@ export const QueryInput = () => {
         // 2. CGPA Sync
         const cgpaMatch = lower.match(/(?:above|more than|>|>=|cgpaabove|cgpa\s*above)\s*(\d+(\.\d+)?)/);
         const cgpaBelowMatch = lower.match(/(?:below|less than|<|<=|cgpabelow|cgpa\s*below)\s*(\d+(\.\d+)?)/);
+        const exactMatch = lower.match(/\b([56789](\.\d+)?)\b/);
         
         if (cgpaMatch) {
             const val = parseFloat(cgpaMatch[1]);
-            if (val >= 8) newFilters.cgpa = '>8';
-            else if (val >= 7) newFilters.cgpa = '>7';
-            else if (val >= 6) newFilters.cgpa = '>6';
+            if (val >= 9) newFilters.cgpa = '9-10';
+            else if (val >= 8) newFilters.cgpa = '8-8.99';
+            else if (val >= 7) newFilters.cgpa = '7-7.99';
+            else if (val >= 6) newFilters.cgpa = '6-6.99';
+        } else if (exactMatch) {
+            const val = parseFloat(exactMatch[1]);
+            const fl = Math.floor(val);
+            if (fl === 9) newFilters.cgpa = '9-10';
+            else if (fl === 8) newFilters.cgpa = '8-8.99';
+            else if (fl === 7) newFilters.cgpa = '7-7.99';
+            else if (fl === 6) newFilters.cgpa = '6-6.99';
         }
 
         // 3. Placement Sync
@@ -191,9 +200,10 @@ export const QueryInput = () => {
                             onChange={(e) => handleFilterChange('cgpa', e.target.value)}
                         >
                             <option value="All">CGPA: All</option>
-                            <option value=">6">CGPA above 6</option>
-                            <option value=">7">CGPA above 7</option>
-                            <option value=">8">CGPA above 8</option>
+                            <option value="6-6.99">CGPA 6.0 - 6.99</option>
+                            <option value="7-7.99">CGPA 7.0 - 7.99</option>
+                            <option value="8-8.99">CGPA 8.0 - 8.99</option>
+                            <option value="9-10">CGPA 9.0 - 10.0</option>
                         </select>
                     </div>
 
