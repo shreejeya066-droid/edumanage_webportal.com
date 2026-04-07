@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -14,6 +14,16 @@ export const AdminProfile = () => {
         email: user?.email || (user?.username === 'admin' ? 'admin@school.edu' : 'admin@example.com'),
         mobile: user?.mobile || '9876543210'
     });
+
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                name: user?.name || 'Super Admin',
+                email: user?.email || (user?.username === 'admin' ? 'admin@school.edu' : 'admin@example.com'),
+                mobile: user?.mobile || '9876543210'
+            });
+        }
+    }, [user]);
 
     const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
     const [passwordData, setPasswordData] = useState({
