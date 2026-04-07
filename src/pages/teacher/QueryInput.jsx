@@ -31,13 +31,12 @@ export const QueryInput = () => {
         };
 
         // 1. Year Sync
-        const yearMatch = lower.match(/(\d)(?:st|nd|rd|th)?\s*year/i) || lower.match(/(first|second|third|fourth|final)\s*year/i);
+        const yearMatch = lower.match(/(\d)(?:st|nd|rd|th)?\s*year/i) || lower.match(/(first|second|third)\s*year/i);
         if (yearMatch) {
             const val = yearMatch[1].toLowerCase();
             if (val === '1' || val.startsWith('fir')) newFilters.year = '1';
             else if (val === '2' || val.startsWith('sec')) newFilters.year = '2';
             else if (val === '3' || val.startsWith('thi')) newFilters.year = '3';
-            else if (val === '4' || val.startsWith('fou') || val.startsWith('fin')) newFilters.year = '4';
         }
 
         // 2. CGPA Sync
@@ -181,7 +180,6 @@ export const QueryInput = () => {
                             <option value="1">1st Year</option>
                             <option value="2">2nd Year</option>
                             <option value="3">3rd Year</option>
-                            <option value="4">4th Year</option>
                         </select>
                     </div>
 
